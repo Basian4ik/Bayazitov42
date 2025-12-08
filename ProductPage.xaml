@@ -22,38 +22,41 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="2" Name="ItemCountTextBlock" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="16" Margin="5"/>
 
-        <TextBlock Name="TBlockCount" Grid.Row="1" Grid.Column="0" 
-                   FontSize="20" Margin="5"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"></TextBlock>
-
-        <StackPanel Grid.Column="1" Grid.Row="1" Margin="5"
-                    Orientation="Vertical" HorizontalAlignment="Left">
-            <TextBlock Text="поиск по наименованию" TextAlignment="Center"
-                Width="250" FontSize="20"></TextBlock>
-
-            <TextBox Name="TBoxSearch" TextChanged="TBoxSearch_TextChanged" Width="250" FontSize="15"></TextBox>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" 
+    Orientation="Vertical" Margin="10" Grid.ColumnSpan="2">
+            <TextBlock Text="Вы авторизованы как:" FontSize="14" HorizontalAlignment="Left"/>
+            <TextBlock Name="FIOTB" FontSize="14" FontWeight="Bold" HorizontalAlignment="Left"/>
+            <TextBlock Text="Роль:" FontSize="14" HorizontalAlignment="Left"/>
+            <TextBlock Name="RoleTB" FontSize="14" FontWeight="Bold" HorizontalAlignment="Left"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Grid.Row="1" Margin="5"
-                    Orientation="Vertical" HorizontalAlignment="Center">
-            <RadioButton Name="RButtonUp"  Content="по возрастанию стоимости" GroupName="Sort"
-                Width="300" FontSize="20" Checked="RButtonUp_Checked"></RadioButton>
+        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Margin="10" Orientation="Horizontal">
+                <TextBlock Text="Введите название для поиска" TextAlignment="Right"
+                   Width="300" FontSize="20"></TextBlock>
+                <TextBox Name="TBoxSearch" TextChanged="TBoxSearch_TextChanged"
+                 Width="300" FontSize="15"></TextBox>
+            </StackPanel>
 
-            <RadioButton Name="RButtonDown" Content="по убыванию стоимости" GroupName="Sort"
-                Width="300" FontSize="20" Checked="RButtonDown_Checked" ></RadioButton>
-        </StackPanel>
-
-        <StackPanel Grid.Column="3" Grid.Row="1" Margin="5"
-                    Orientation="Vertical" HorizontalAlignment="Left">
-            <TextBlock Text="фильтрация по скидке" TextAlignment="Center" Width="300" FontSize="20"></TextBlock>
-
-            <ComboBox Name="ComboType"  SelectionChanged="ComboType_SelectionChanged" FontSize="15" Width="200">
-                <TextBlock>Все диапазоны</TextBlock>
-                <TextBlock>0-9,99%</TextBlock>
-                <TextBlock>10-14,99%</TextBlock>
-                <TextBlock>15% и более</TextBlock>
-            </ComboBox>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock Text=" Выбери название для поиска " TextAlignment="Right"
+                   Width="300" FontSize="20"></TextBlock>
+                <ComboBox Name="ComboType" SelectionChanged="ComboType_SelectionChanged"
+                  FontSize="15" Width="200">
+                    <TextBlock>Все</TextBlock>
+                    <TextBlock> от 0 до 9,99%</TextBlock>
+                    <TextBlock> от 10 до 14,99%</TextBlock>
+                    <TextBlock> от 15% и более</TextBlock>
+                </ComboBox>
+            </StackPanel>
+        </WrapPanel>
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="5">
+            <RadioButton Content="По возрастанию стоимости" GroupName = "Sort"
+                 Width="300" FontSize="20" Checked="RButtonUp_Checked"
+                 Name="RButtonUp"></RadioButton>
+            <RadioButton Content="По убыванию стоимости" GroupName="Sort"
+                 Width="300" FontSize="20" Checked="RButtonDown_Checked"
+                 Name="RButtonDown"></RadioButton>
         </StackPanel>
         <ListView Name="ProductListView" Grid.Row="2" Grid.ColumnSpan="4">
             <ListView.ItemTemplate>
