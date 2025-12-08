@@ -39,6 +39,7 @@ namespace Bayazitov42
             {
                 if (ProductPhoto == null)
                     return null;
+
                 return "img/" + ProductPhoto;
             }
         }
