@@ -20,6 +20,17 @@ namespace Bayazitov42
     /// </summary>
     public partial class ProductPage : Page
     {
+        public static List<Product> CurrentProducts = new List<Product>();
+        private User _currentUser; // чтобы сохранить юзера
+        private static Dictionary<string, int> _orderItems = new Dictionary<string, int>();
+
+        public static event Action OnCartCleared;
+
+        public static void ClearOrderItems()
+        {
+            _orderItems.Clear();
+            OnCartCleared?.Invoke();
+        }
         public ProductPage(User user)
         {
             InitializeComponent();
@@ -47,6 +58,42 @@ namespace Bayazitov42
             ComboType.SelectedIndex = 0;
             UpdateProductes();
         }
+        public static event EventHandler OrderItemsChanged;
+
+        private static void OnOrderItemsChanged()
+        {
+            OrderItemsChanged?.Invoke(null, EventArgs.Empty);
+        }
+        private void AddToOrder(Product product)
+        {
+            string article = product.ProductArticleNumber;
+
+            if (_orderItems.ContainsKey(article))
+            {
+                _orderItems[article]++;
+            }
+            else
+            {
+                _orderItems[article] = 1;
+            }
+
+            UpdateOrderButtonVisibility();
+            MessageBox.Show($"Товар \"{product.ProductName}\" добавлен к заказу");
+            OnOrderItemsChanged();
+            UpdateOrderButtonVisibility();
+        }
+        private void UpdateOrderButtonVisibility()
+        {
+            // Простая проверка - если словарь пуст, скрываем кнопку
+            bool hasItems = _orderItems.Count > 0;
+
+            // Дополнительная проверка - считать общее количество
+            int totalCount = _orderItems.Sum(item => item.Value);
+            hasItems = totalCount > 0;
+
+            ViewOrderBtn.Visibility = hasItems ? Visibility.Visible : Visibility.Collapsed;
+
+        }
         public ProductPage()
         {
             InitializeComponent();
@@ -61,6 +108,8 @@ namespace Bayazitov42
             var displayed = ProductListView.Items.Count;
             ItemCountTextBlock.Text = $"кол-во {displayed} из {total}";
         }
+
+
         private void UpdateProductes()
         {
             var currentServices = Bayazitov41Entities.GetContext().Product.ToList();
@@ -123,6 +172,58 @@ namespace Bayazitov42
         private void ComboType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateProductes();
+        }
+
+        private void AddToOrderMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProductListView.SelectedItem is Product selectedProduct)
+            {
+                AddToOrder(selectedProduct);
+            }
+        }
+
+        private void ViewOrderBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedOrderProducts = new List<OrderProduct>();
+            var selectedProducts = new List<Product>();
+
+            foreach (var item in _orderItems)
+            {
+                var product = Bayazitov41Entities.GetContext().Product
+                    .FirstOrDefault(p => p.ProductArticleNumber == item.Key);
+
+                if (product != null)
+                {
+                    selectedProducts.Add(product);
+                    var orderProduct = new OrderProduct
+                    {
+                        ProductArticleNumber = product.ProductArticleNumber,
+                        Count = item.Value
+                    };
+                    selectedOrderProducts.Add(orderProduct);
+                }
+            }
+
+            var orderWindow = new OrderWindow(selectedOrderProducts, selectedProducts, _currentUser);
+            orderWindow.Owner = Application.Current.MainWindow;
+
+            // Подписываемся на событие закрытия окна
+            orderWindow.Closed += (s, args) =>
+            {
+                // Когда окно закрывается (любым способом)
+                UpdateOrderButtonVisibility();
+
+                // Дополнительная проверка
+                if (_orderItems.Count == 0)
+                {
+                    ViewOrderBtn.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            orderWindow.ShowDialog(); // Не используем результат, т.к. слушаем событие Closed
+
+            // ИЛИ просто всегда обновляем после ShowDialog
+            UpdateOrderButtonVisibility();
         }
     }
 }

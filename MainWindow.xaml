@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bayazitov42"
         mc:Ignorable="d"
-        Title="Bayazitov42" Height="1000" Width="1050" FontFamily="Comic Sans MS" Icon="/Res/icon.ico">
+        Title="Bayazitov42" Height="1000" Width="1200" FontFamily="Comic Sans MS" Icon="/Res/icon.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
